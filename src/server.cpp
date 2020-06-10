@@ -59,7 +59,6 @@ int server_main() {
             std::cout << "recvfrom returned SOCKET_ERROR, WSAGetLastError(): " << WSAGetLastError() << std::endl;
         } else {
             buffer[bytes_received] = 0;
-            std::cout << "Message from "
             std::cout << "Input from "
                       << (int) from.sin_addr.S_un.S_un_b.s_b1 << "."
                       << (int) from.sin_addr.S_un.S_un_b.s_b2 << "."
@@ -83,6 +82,34 @@ int server_main() {
                 default:
                     std::cout << "Redundant input: " << input << std::endl;
                     break;
+            }
+
+            // Generate game state packet.
+            int32_t write_index = 0;
+
+            memcpy(&buffer[write_index], &position_x, sizeof(position_x));
+            write_index += sizeof(position_x);
+            memcpy(&buffer[write_index], &position_y, sizeof(position_y));
+            write_index += sizeof(position_y);
+            memcpy(&buffer[write_index], &position_z, sizeof(position_z));
+            write_index += sizeof(position_z);
+            memcpy(&buffer[write_index], &rotation_x, sizeof(rotation_x));
+            write_index += sizeof(rotation_x);
+            memcpy(&buffer[write_index], &rotation_y, sizeof(rotation_y));
+            write_index += sizeof(rotation_y);
+            memcpy(&buffer[write_index], &rotation_z, sizeof(rotation_z));
+            write_index += sizeof(rotation_z);
+
+            // Send state packet to client.
+            int buffer_length = sizeof(position_x) + sizeof(position_y) + sizeof(position_z)
+                    + sizeof(rotation_x) + sizeof(rotation_y) + sizeof(rotation_z);
+            flags = 0;
+            SOCKADDR* to = (SOCKADDR*)&from;
+            int to_length = sizeof(from);
+            if (sendto(sock, buffer, buffer_length, flags, to, to_length) == SOCKET_ERROR)
+            {
+                std::cout << "Sendto failed: " << WSAGetLastError() << std::endl;
+                return 1;
             }
         }
     }
