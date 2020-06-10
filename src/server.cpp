@@ -41,6 +41,12 @@ int server_main() {
     /// Receive packets.
     std::cout << "Waiting for packet..." << std::endl;
     char buffer[SOCKET_BUFFER_SIZE];
+    float_t position_x = 0;
+    float_t position_y = 0;
+    float_t position_z = 0;
+    float_t rotation_x = 0; // roll:    will usually be 0.
+    float_t rotation_y = 0; // pitch:   look left and right.
+    float_t rotation_z = 0; // yaw:     look up and down.
     bool active = true;
     while(active) {
         int flags = 0;
@@ -54,12 +60,30 @@ int server_main() {
         } else {
             buffer[bytes_received] = 0;
             std::cout << "Message from "
+            std::cout << "Input from "
                       << (int) from.sin_addr.S_un.S_un_b.s_b1 << "."
                       << (int) from.sin_addr.S_un.S_un_b.s_b2 << "."
                       << (int) from.sin_addr.S_un.S_un_b.s_b3 << "."
                       << (int) from.sin_addr.S_un.S_un_b.s_b4 << ":"
                       << (int) from.sin_port << " - "
                       << buffer << std::endl;
+
+            // Process Input
+            char input = buffer[0];
+            switch(input)
+            {
+                case 'w': ++position_y; break;
+                case 'a': --position_x; break;
+                case 's': --position_y; break;
+                case 'd': ++position_x; break;
+
+                case '[': ++rotation_y; break;
+                case ']': --rotation_y; break;
+
+                default:
+                    std::cout << "Redundant input: " << input << std::endl;
+                    break;
+            }
         }
     }
 
