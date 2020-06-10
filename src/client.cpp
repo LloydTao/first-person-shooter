@@ -34,6 +34,12 @@ int client_main()
 
     // Prepare messages.
     char buffer[SOCKET_BUFFER_SIZE];
+    float_t position_x = 0;
+    float_t position_y = 0;
+    float_t position_z = 0;
+    float_t rotation_x = 0; // roll:    will usually be 0.
+    float_t rotation_y = 0; // pitch:   look left and right.
+    float_t rotation_z = 0; // yaw:     look up and down.
     bool active = true;
     while(active) {
         scanf_s( "\n%c", &buffer[0], 1 );
