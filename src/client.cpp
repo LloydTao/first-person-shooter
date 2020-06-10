@@ -32,19 +32,22 @@ int client_main()
     server_address.sin_port = htons(PORT);
     server_address.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 
-    // Prepare message.
+    // Prepare messages.
     char message[SOCKET_BUFFER_SIZE];
-    std::cout << "Enter message: ";
-    std::cin >> message;
+    bool active = true;
+    while(active) {
+        std::cout << "Enter message: ";
+        std::cin >> message;
 
-    // Send packet with message.
-    int flags = 0;
-    if( sendto(sock, message, strlen(message), flags, (SOCKADDR*)&server_address, sizeof(server_address)) == SOCKET_ERROR)
-    {
-        printf("sendto failed: %d", WSAGetLastError());
-        return 1;
+        // Send packet with message.
+        int flags = 0;
+        if( sendto(sock, message, strlen(message), flags, (SOCKADDR*)&server_address, sizeof(server_address)) == SOCKET_ERROR)
+        {
+            printf("sendto failed: %d", WSAGetLastError());
+            return 1;
+        }
+        std::cout << "Packet sent!" << std::endl;
     }
-    std::cout << "Packet sent!" << std::endl;
 
     /// Clean up socket.
     std::cout << "Cleaning up Winsock..." << std::endl;
