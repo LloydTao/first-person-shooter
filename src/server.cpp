@@ -38,29 +38,29 @@ int server_main() {
         return 1;
     }
 
-    /// Receive packet.
+    /// Receive packets.
     std::cout << "Waiting for packet..." << std::endl;
     char buffer[SOCKET_BUFFER_SIZE];
-    int flags = 0;
-    SOCKADDR_IN from;
-    int from_size = sizeof(from);
+    bool active = true;
+    while(active) {
+        int flags = 0;
+        SOCKADDR_IN from;
+        int from_size = sizeof(from);
 
-    // Get the packet.
-    int bytes_received = recvfrom(sock, buffer, SOCKET_BUFFER_SIZE, flags, (SOCKADDR*)&from, &from_size);
-    if (bytes_received == SOCKET_ERROR)
-    {
-        std::cout << "recvfrom returned SOCKET_ERROR, WSAGetLastError(): " << WSAGetLastError() << std::endl;
-    }
-    else
-    {
-        buffer[bytes_received] = 0;
-        std::cout << "Message from "
-                  << (int)from.sin_addr.S_un.S_un_b.s_b1 << "."
-                  << (int)from.sin_addr.S_un.S_un_b.s_b2 << "."
-                  << (int)from.sin_addr.S_un.S_un_b.s_b3 << "."
-                  << (int)from.sin_addr.S_un.S_un_b.s_b4 << ":"
-                  << (int)from.sin_port  << " - "
-                  << buffer << std::endl;
+        // Get the packet.
+        int bytes_received = recvfrom(sock, buffer, SOCKET_BUFFER_SIZE, flags, (SOCKADDR * ) & from, &from_size);
+        if (bytes_received == SOCKET_ERROR) {
+            std::cout << "recvfrom returned SOCKET_ERROR, WSAGetLastError(): " << WSAGetLastError() << std::endl;
+        } else {
+            buffer[bytes_received] = 0;
+            std::cout << "Message from "
+                      << (int) from.sin_addr.S_un.S_un_b.s_b1 << "."
+                      << (int) from.sin_addr.S_un.S_un_b.s_b2 << "."
+                      << (int) from.sin_addr.S_un.S_un_b.s_b3 << "."
+                      << (int) from.sin_addr.S_un.S_un_b.s_b4 << ":"
+                      << (int) from.sin_port << " - "
+                      << buffer << std::endl;
+        }
     }
 
     /// Clean up socket.
