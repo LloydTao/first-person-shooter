@@ -45,8 +45,8 @@ int server_main() {
     float_t position_y = 0;
     float_t position_z = 0;
     float_t rotation_x = 0; // roll:    will usually be 0.
-    float_t rotation_y = 0; // pitch:   look left and right.
-    float_t rotation_z = 0; // yaw:     look up and down.
+    float_t rotation_y = 0; // yaw:     look left and right.
+    float_t rotation_z = 0; // pitch:   look up and down.
     bool active = true;
     while(active) {
         int flags = 0;
