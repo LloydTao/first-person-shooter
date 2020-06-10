@@ -52,7 +52,42 @@ int client_main()
             printf("sendto failed: %d", WSAGetLastError());
             return 1;
         }
-        std::cout << "Packet sent!" << std::endl;
+
+        // Wait for reply.
+        flags = 0;
+        SOCKADDR_IN from;
+        int from_size = sizeof(from);
+        int bytes_received = recvfrom( sock, buffer, SOCKET_BUFFER_SIZE, flags, (SOCKADDR*)&from, &from_size );
+        if (bytes_received == SOCKET_ERROR)
+        {
+            std::cout << "recvfrom returned SOCKET_ERROR, WSAGetLastError(): " << WSAGetLastError() << std::endl;
+            break;
+        }
+
+        // Process the packet.
+        int32_t read_index = 0;
+
+        memcpy(&position_x, &buffer[read_index], sizeof(position_x));
+        read_index += sizeof(position_x);
+        memcpy(&position_y, &buffer[read_index], sizeof(position_y));
+        read_index += sizeof(position_y);
+        memcpy(&position_z, &buffer[read_index], sizeof(position_z));
+        read_index += sizeof(position_z);
+        memcpy(&rotation_x, &buffer[read_index], sizeof(rotation_x));
+        read_index += sizeof(rotation_x);
+        memcpy(&rotation_y, &buffer[read_index], sizeof(rotation_y));
+        read_index += sizeof(rotation_y);
+        memcpy(&rotation_z, &buffer[read_index], sizeof(rotation_z));
+        read_index += sizeof(rotation_z);
+
+        std::cout << "Position: "
+                << "x: " << position_x << ", "
+                << "y: " << position_y << ", "
+                << "z: " << position_z << ", "
+                << "roll: " << rotation_x << ", "
+                << "pitch: " << rotation_y << ", "
+                << "yaw: " << rotation_z << ", "
+                << std::endl;
     }
 
     /// Clean up socket.
