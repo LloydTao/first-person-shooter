@@ -33,15 +33,15 @@ int client_main()
     server_address.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");
 
     // Prepare messages.
-    char message[SOCKET_BUFFER_SIZE];
+    char buffer[SOCKET_BUFFER_SIZE];
     bool active = true;
     while(active) {
-        std::cout << "Enter message: ";
-        std::cin >> message;
+        scanf_s( "\n%c", &buffer[0], 1 );
+
 
         // Send packet with message.
         int flags = 0;
-        if( sendto(sock, message, strlen(message), flags, (SOCKADDR*)&server_address, sizeof(server_address)) == SOCKET_ERROR)
+        if( sendto(sock, buffer, 1, flags, (SOCKADDR*)&server_address, sizeof(server_address)) == SOCKET_ERROR)
         {
             printf("sendto failed: %d", WSAGetLastError());
             return 1;
